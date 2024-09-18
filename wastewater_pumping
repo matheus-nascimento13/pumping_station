@@ -1,0 +1,170 @@
+PROGRAM PLC_PRG
+VAR
+	level : REAL;
+	mode_operation:BOOL;
+	working_state : WSTRING;
+	pump1, pump2, pump3 : BOOL;
+	pump1_was_on,pump2_was_on, pump3_was_on : BOOL;
+	counter_pump : INT := 1;
+	high_level_alarm : BOOL;
+	low_level_alarm : BOOL;
+	rising_edge1, rising_edge2, rising_edge3 : BOOL; 
+END_VAR
+
+IF counter_pump > 3 THEN
+	counter_pump :=1;
+END_IF
+
+CASE counter_pump OF
+
+	1: IF mode_operation THEN
+		
+		rising_edge1:= (pump1_was_on = TRUE) AND (pump1 = FALSE);
+
+		pump1_was_on := pump1;
+
+			IF rising_edge1 THEN
+				counter_pump := counter_pump + 1;
+			END_IF
+		 IF level >= 80 THEN
+			 working_state:= "HIGH LEVEL";
+			 pump1 := TRUE;
+			 pump2 := TRUE;
+			 pump3 := TRUE;
+			 high_level_alarm :=TRUE;
+			 low_level_alarm := FALSE;
+		END_IF
+		IF level >= 60 AND level < 80 THEN
+			working_state:= "medium level";
+			pump1 := TRUE;
+			pump2 := TRUE;
+			pump3 := FALSE;
+			 high_level_alarm :=FALSE;
+			 low_level_alarm := FALSE;
+		END_IF
+		IF level >= 40 AND level < 60 THEN
+			working_state := "normal level";
+			pump1 := TRUE;
+			pump2 := FALSE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := FALSE;
+		END_IF
+		IF	level >= 20 AND level <40 THEN
+			working_state := "normal level";
+			pump1 := FALSE;
+			pump2 := FALSE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := FALSE;
+		END_IF
+		IF level < 20 THEN
+			working_state := "LOW LEVEL";
+			pump1 := FALSE;
+			pump2 := FALSE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := TRUE;
+		END_IF
+	END_IF
+	
+	2: IF mode_operation THEN
+		rising_edge2:= (pump2_was_on = TRUE) AND (pump2 = FALSE);
+
+			pump2_was_on := pump2;
+
+				IF rising_edge2 THEN
+					counter_pump := counter_pump + 1;
+				END_IF
+		IF level >= 80 THEN
+			 working_state:= "HIGH LEVEL";
+			 pump1 := TRUE;
+			 pump2 := TRUE;
+			 pump3 := TRUE;
+			 high_level_alarm :=TRUE;
+			 low_level_alarm := FALSE;
+		END_IF
+		IF level >= 60 AND level < 80 THEN
+			working_state:= "medium level";
+			pump1 := FALSE;
+			pump2 := TRUE;
+			pump3 := TRUE;
+			 high_level_alarm :=FALSE;
+			 low_level_alarm := FALSE;
+		END_IF
+		IF level >= 40 AND level < 60 THEN
+			working_state := "normal level";
+			pump1 := FALSE;
+			pump2 := TRUE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := FALSE;
+		END_IF
+		IF	level >= 20 AND level < 40 THEN
+			working_state := "normal level";
+			pump1 := FALSE;
+			pump2 := FALSE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := FALSE;
+		END_IF
+		IF level < 20 THEN
+			working_state := "LOW LEVEL";
+			pump1 := FALSE;
+			pump2 := FALSE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := TRUE;
+		END_IF
+	END_IF
+		
+		3: IF mode_operation THEN
+			rising_edge3:= (pump3_was_on = TRUE) AND (pump3 = FALSE);
+
+			pump3_was_on := pump3;
+
+				IF rising_edge3 THEN
+					counter_pump := counter_pump + 1;
+				END_IF
+			IF level >= 80 THEN
+			 working_state:= "HIGH LEVEL";
+			 pump1 := TRUE;
+			 pump2 := TRUE;
+			 pump3 := TRUE;
+			 high_level_alarm :=TRUE;
+			 low_level_alarm := FALSE;
+		END_IF
+		IF level >= 60 AND level < 80 THEN
+			working_state:= "medium level";
+			pump1 := FALSE;
+			pump2 := TRUE;
+			pump3 := TRUE;
+			 high_level_alarm :=FALSE;
+			 low_level_alarm := FALSE;
+		END_IF
+		IF level >= 40 AND level < 60 THEN
+			working_state := "normal level";
+			pump1 := FALSE;
+			pump2 := FALSE;
+			pump3 := TRUE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := FALSE;
+		END_IF
+		IF	level >= 20 AND level < 40 THEN
+			working_state := "normal level";
+			pump1 := FALSE;
+			pump2 := FALSE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := FALSE;
+		END_IF
+		IF level < 20 THEN
+			working_state := "LOW LEVEL";
+			pump1 := FALSE;
+			pump2 := FALSE;
+			pump3 := FALSE;
+			high_level_alarm :=FALSE;
+			low_level_alarm := TRUE;
+		END_IF
+	END_IF
+END_CASE
